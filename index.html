@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factory Complex · Fábrica de Complejidades</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           FACTORY COMPLEX · Diseño Futurista Serio
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #05070a;
+            --bg-secondary: #0a0d12;
+            --bg-panel: #0d1117;
+            --text-primary: #e6ebf2;
+            --text-secondary: #6b7684;
+            --text-dim: #454e59;
+            --accent: #4dd8e8;
+            --accent-dim: rgba(77, 216, 232, 0.5);
+            --accent-faint: rgba(77, 216, 232, 0.08);
+            --line: rgba(230, 235, 242, 0.08);
+            --line-strong: rgba(230, 235, 242, 0.14);
+            --danger: #e85d4d;
+            --success: #4de88a;
+            --warning: #e8c84d;
+            --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            background-image:
+                linear-gradient(var(--line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--line) 1px, transparent 1px);
+            background-size: 64px 64px;
+            background-position: center top;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        a:hover { opacity: 0.75; }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .mono {
+            font-family: var(--font-mono);
+        }
+
+        .eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .eyebrow::before {
+            content: '';
+            width: 16px;
+            height: 1px;
+            background: var(--accent);
+            display: inline-block;
+        }
+
+        /* --- Header / Navbar --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0;
+            background: rgba(5, 7, 10, 0.9);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--line);
+            transition: border-color 0.3s;
+        }
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 68px;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            letter-spacing: -0.01em;
+            font-family: var(--font-mono);
+        }
+        .nav-brand .logo-mark {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--line-strong);
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+        }
+        .nav-brand .brand-text {
+            color: var(--text-primary);
+        }
+        .nav-brand .brand-suffix {
+            color: var(--text-dim);
+            font-weight: 400;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+            position: relative;
+        }
+        .nav-links a:not(.nav-cta)::before {
+            content: '// ';
+            color: var(--text-dim);
+        }
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+        .nav-cta {
+            padding: 9px 20px;
+            border: 1px solid var(--accent-dim);
+            color: var(--accent) !important;
+            font-weight: 600;
+            transition: background 0.2s, color 0.2s;
+        }
+        .nav-cta:hover {
+            background: var(--accent);
+            color: var(--bg-primary) !important;
+            opacity: 1;
+        }
+
+        /* --- Hero --- */
+        .hero {
+            padding: 168px 0 96px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 8%;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--line-strong) 20%, var(--line-strong) 80%, transparent);
+            pointer-events: none;
+        }
+        .hero .container {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 48px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-content .eyebrow {
+            margin-bottom: 24px;
+        }
+        .hero-content h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            line-height: 1.12;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+        }
+        .hero-content h1 .highlight {
+            color: var(--accent);
+        }
+        .hero-content p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 520px;
+            margin-bottom: 40px;
+        }
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: var(--accent);
+            color: var(--bg-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid var(--accent);
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-primary:hover {
+            opacity: 0.85;
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            padding: 14px 28px;
+            background: transparent;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid var(--line-strong);
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        .btn-secondary:hover {
+            border-color: var(--text-secondary);
+        }
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 56px;
+            padding-top: 32px;
+            border-top: 1px solid var(--line);
+        }
+        .hero-stats .stat {
+            text-align: left;
+        }
+        .hero-stats .stat-value {
+            font-family: var(--font-mono);
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .hero-stats .stat-label {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.01em;
+        }
+
+        /* --- Interactive Graph Panel --- */
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .graph-preview {
+            width: 100%;
+            max-width: 480px;
+            background: var(--bg-panel);
+            border: 1px solid var(--line-strong);
+            padding: 0;
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+        }
+        .graph-preview .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--line);
+        }
+        .graph-preview .graph-title {
+            font-family: var(--font-mono);
+            font-weight: 500;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .graph-preview .panel-status {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .graph-preview .panel-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: blink 2s ease-in-out infinite;
+        }
+        .graph-preview .graph-body {
+            padding: 0;
+            position: relative;
+            height: 320px;
+        }
+        #reasoning-graph {
+            width: 100%;
+            height: 100%;
+            display: block;
+            cursor: grab;
+        }
+        #reasoning-graph:active {
+            cursor: grabbing;
+        }
+        .graph-controls {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+        }
+        .graph-controls button {
+            background: var(--bg-secondary);
+            border: 1px solid var(--line-strong);
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .graph-controls button:hover,
+        .graph-controls button.active {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .graph-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 18px;
+            padding: 12px 18px;
+            border-top: 1px solid var(--line);
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            color: var(--text-dim);
+        }
+        .graph-legend span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .graph-legend .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .graph-legend .dot.support { background: var(--success); }
+        .graph-legend .dot.contradict { background: var(--danger); }
+        .graph-legend .dot.unresolved { background: var(--text-dim); }
+        .graph-legend .dot.hypothesis { background: var(--accent); }
+        .graph-footer {
+            padding: 10px 18px;
+            border-top: 1px solid var(--line);
+            font-family: var(--font-mono);
+            font-size: 0.66rem;
+            color: var(--text-dim);
+            letter-spacing: 0.02em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .graph-footer .hash {
+            color: var(--accent-dim);
+        }
+        .node-tooltip {
+            position: absolute;
+            background: var(--bg-secondary);
+            border: 1px solid var(--line-strong);
+            padding: 10px 14px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-primary);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s;
+            z-index: 20;
+            max-width: 220px;
+            line-height: 1.4;
+        }
+        .node-tooltip.visible {
+            opacity: 1;
+        }
+        .node-tooltip .tt-title {
+            color: var(--accent);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .node-tooltip .tt-type {
+            color: var(--text-dim);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* --- Secciones generales --- */
+        .section {
+            padding: 96px 0;
+            border-top: 1px solid var(--line);
+        }
+        .section-header {
+            max-width: 680px;
+            margin: 0 0 56px;
+        }
+        .section-header .eyebrow {
+            margin-bottom: 16px;
+        }
+        .section-header h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 14px;
+        }
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        /* --- Servicios --- */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1px;
+            background: var(--line);
+            border: 1px solid var(--line);
+        }
+        .service-card {
+            background: var(--bg-secondary);
+            padding: 32px 28px;
+            transition: background 0.25s;
+        }
+        .service-card:hover {
+            background: var(--bg-panel);
+        }
+        .service-card .index {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+            letter-spacing: 0.02em;
+        }
+        .service-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: -0.01em;
+        }
+        .service-card p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+        }
+
+        /* --- Tecnologías --- */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1px;
+            background: var(--line);
+            border: 1px solid var(--line);
+        }
+        .tech-item {
+            background: var(--bg-secondary);
+            padding: 20px 12px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+            transition: color 0.2s, background 0.2s;
+        }
+        .tech-item:hover {
+            color: var(--accent);
+            background: var(--bg-panel);
+        }
+
+        /* --- Sobre / Principios --- */
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1px;
+            background: var(--line);
+            border: 1px solid var(--line);
+        }
+        .principle-card {
+            background: var(--bg-secondary);
+            padding: 28px 24px;
+        }
+        .principle-card .index {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            display: block;
+            margin-bottom: 16px;
+        }
+        .principle-card h4 {
+            font-weight: 600;
+            font-size: 1.02rem;
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+        .principle-card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+        }
+
+        /* --- CTA final --- */
+        .cta-section {
+            background: var(--bg-panel);
+            border: 1px solid var(--line-strong);
+            padding: 64px 40px;
+            text-align: center;
+            margin-top: 40px;
+            position: relative;
+        }
+        .cta-section::before,
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border: 1px solid var(--accent-dim);
+        }
+        .cta-section::before {
+            top: -1px;
+            left: -1px;
+            border-right: none;
+            border-bottom: none;
+        }
+        .cta-section::after {
+            bottom: -1px;
+            right: -1px;
+            border-left: none;
+            border-top: none;
+        }
+        .cta-section .eyebrow {
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .cta-section h2 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            letter-spacing: -0.02em;
+        }
+        .cta-section p {
+            color: var(--text-secondary);
+            max-width: 480px;
+            margin: 0 auto 32px;
+        }
+        .cta-meta {
+            margin-top: 32px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            font-size: 0.82rem;
+            font-family: var(--font-mono);
+            color: var(--text-dim);
+        }
+
+        /* --- Footer --- */
+        .footer {
+            padding: 36px 0;
+            border-top: 1px solid var(--line);
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+        .footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .footer .brand {
+            font-weight: 600;
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+        }
+        .footer-links {
+            display: flex;
+            gap: 28px;
+        }
+        .footer-links a {
+            color: var(--text-dim);
+            font-size: 0.82rem;
+            font-family: var(--font-mono);
+        }
+        .footer-links a:hover {
+            color: var(--text-secondary);
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 992px) {
+            .hero .container {
+                grid-template-columns: 1fr;
+                text-align: left;
+            }
+            .hero::before {
+                display: none;
+            }
+            .hero-visual .graph-preview {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar .container {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 14px 24px;
+                gap: 12px;
+            }
+            .nav-links {
+                gap: 20px;
+                flex-wrap: wrap;
+            }
+            .hero {
+                padding: 140px 0 64px;
+            }
+            .hero-content h1 {
+                font-size: 2.1rem;
+            }
+            .hero-stats {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .section-header h2 {
+                font-size: 1.7rem;
+            }
+            .cta-section {
+                padding: 44px 24px;
+            }
+            .cta-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .graph-preview .graph-body {
+                height: 280px;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--line-strong);
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+     ============================================================ -->
+<header class="navbar" id="navbar">
+    <div class="container">
+        <div class="nav-brand">
+            <span class="logo-mark">FC</span>
+            <span class="brand-text">Factory Complex</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#tecnologias">Tecnologías</a></li>
+            <li><a href="#sobre">Sobre</a></li>
+            <li><a href="#contacto" class="nav-cta">Acceder</a></li>
+        </ul>
+    </div>
+</header>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero" id="inicio">
+    <div class="container">
+        <div class="hero-content">
+            <div class="eyebrow">Sistemas industriales · Geociencia · Auditoría</div>
+            <h1>
+                Donde la <span class="highlight">complejidad</span><br>
+                se convierte en <span class="highlight">ventaja</span>
+            </h1>
+            <p>
+                Factory Complex es un conglomerado tecnológico especializado en software industrial,
+                plataformas de comercio escalables y sistemas geocientíficos avanzados.
+                Transformamos ideas en soluciones auditables, trazables y desplegables.
+            </p>
+            <div class="hero-buttons">
+                <a href="#contacto" class="btn-primary">Iniciar proyecto →</a>
+                <a href="#servicios" class="btn-secondary">Explorar servicios</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Tests de integración · 100% pass</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">07</div>
+                    <div class="stat-label">Bio-sensores integrados</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">N/A</div>
+                    <div class="stat-label">Límite de escalabilidad</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="graph-preview">
+                <div class="panel-header">
+                    <span class="graph-title">Grafo de razonamiento</span>
+                    <span class="panel-status">Live</span>
+                </div>
+                <div class="graph-body">
+                    <div class="graph-controls">
+                        <button id="btn-reset" title="Reiniciar layout">RESET</button>
+                        <button id="btn-pause" title="Pausar / reanudar simulación">PAUSE</button>
+                    </div>
+                    <canvas id="reasoning-graph" width="480" height="320"></canvas>
+                    <div class="node-tooltip" id="node-tooltip">
+                        <div class="tt-type" id="tt-type"></div>
+                        <div class="tt-title" id="tt-title"></div>
+                        <div id="tt-desc"></div>
+                    </div>
+                </div>
+                <div class="graph-legend">
+                    <span><span class="dot hypothesis"></span> Hipótesis</span>
+                    <span><span class="dot support"></span> Apoyo</span>
+                    <span><span class="dot contradict"></span> Contradicción</span>
+                    <span><span class="dot unresolved"></span> No resuelto</span>
+                </div>
+                <div class="graph-footer">
+                    <span class="hash">evidence_hash: 7f3a…e91c · verified</span>
+                    <span id="graph-stats">78% SUPPORTED</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SERVICIOS
+     ============================================================ -->
+<section class="section" id="servicios">
+    <div class="container">
+        <div class="section-header">
+            <div class="eyebrow">Capacidades</div>
+            <h2>Servicios de ingeniería</h2>
+            <p>Diseñamos, construimos y desplegamos software industrial con rigor epistémico y trazabilidad absoluta.</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <span class="index">01</span>
+                <h3>Inteligencia Geoterritorial</h3>
+                <p>Sistema GEO / SFCC-CORE para minería, exploración y monitoreo ambiental. Integración de datos geocientíficos y bio-sensores con motor de evidencia auditado.</p>
+            </div>
+            <div class="service-card">
+                <span class="index">02</span>
+                <h3>Software Industrial</h3>
+                <p>Factoría de código para entornos críticos: APIs de alto rendimiento, microservicios, pipelines de datos y arquitecturas escalables con FastAPI y PostGIS.</p>
+            </div>
+            <div class="service-card">
+                <span class="index">03</span>
+                <h3>Plataformas de Comercio</h3>
+                <p>Ecosistemas digitales B2B y B2C con gestión de usuarios, pedidos, facturación y notificaciones. Integración con sistemas legados y APIs de terceros.</p>
+            </div>
+            <div class="service-card">
+                <span class="index">04</span>
+                <h3>Biosensórica Multimodal</h3>
+                <p>Conectores para 7 fuentes de bio-datos: acústica, electrofisiología, VOCs, nanobiónica, transcriptómica, fitominería y biominería. Datos reales o sintéticos.</p>
+            </div>
+            <div class="service-card">
+                <span class="index">05</span>
+                <h3>Razonamiento y Auditoría</h3>
+                <p>Motor de evidencia con grafos de razonamiento, hash de auditoría y criterios de abstención. Decisión explicable (SUPPORTED / REFUTED / INDETERMINATE / ABSTAINED).</p>
+            </div>
+            <div class="service-card">
+                <span class="index">06</span>
+                <h3>Despliegue y DevOps</h3>
+                <p>Contenerización con Docker, orquestación con Docker Compose, CI/CD con GitHub Actions, monitoreo con Prometheus y despliegue en AWS/Railway/Fly.io.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     TECNOLOGÍAS
+     ============================================================ -->
+<section class="section" id="tecnologias" style="background:var(--bg-secondary);">
+    <div class="container">
+        <div class="section-header">
+            <div class="eyebrow">Stack técnico</div>
+            <h2>Nuestro stack técnico</h2>
+            <p>Herramientas y estándares que garantizan calidad, escalabilidad y seguridad.</p>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-item">Python 3.10+</div>
+            <div class="tech-item">FastAPI</div>
+            <div class="tech-item">PostgreSQL + PostGIS</div>
+            <div class="tech-item">Redis</div>
+            <div class="tech-item">Docker</div>
+            <div class="tech-item">GitHub Actions</div>
+            <div class="tech-item">Pydantic V2</div>
+            <div class="tech-item">NetworkX + Plotly</div>
+            <div class="tech-item">GeoJSON / WFS</div>
+            <div class="tech-item">JWT + bcrypt</div>
+            <div class="tech-item">SendGrid / SMTP</div>
+            <div class="tech-item">Prometheus + Grafana</div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SOBRE / VALORES
+     ============================================================ -->
+<section class="section" id="sobre">
+    <div class="container">
+        <div class="section-header">
+            <div class="eyebrow">Principios rectores</div>
+            <h2>Principios rectores</h2>
+            <p>La autoridad técnica no se delega. La trazabilidad no se negocia. La abstención es un resultado válido.</p>
+        </div>
+        <div class="principles-grid">
+            <div class="principle-card">
+                <span class="index mono">01</span>
+                <h4>Cero ambigüedad</h4>
+                <p>Ningún conector externo posee autoridad epistemológica. El núcleo valida la evidencia.</p>
+            </div>
+            <div class="principle-card">
+                <span class="index mono">02</span>
+                <h4>Fundamentación científica</h4>
+                <p>Cada afirmación está respaldada por métricas, estadísticas o fundamentos formales.</p>
+            </div>
+            <div class="principle-card">
+                <span class="index mono">03</span>
+                <h4>Auditoría permanente</h4>
+                <p>Cada módulo genera trazabilidad completa y reportes descargables (JSON / Markdown).</p>
+            </div>
+            <div class="principle-card">
+                <span class="index mono">04</span>
+                <h4>Abstención explícita</h4>
+                <p>El sistema puede declarar ABSTAINED cuando la evidencia es insuficiente o contradictoria.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     CTA FINAL / CONTACTO
+     ============================================================ -->
+<section class="section" id="contacto">
+    <div class="container">
+        <div class="cta-section">
+            <div class="eyebrow">Acceso al panel</div>
+            <h2>¿Listo para transformar tu idea?</h2>
+            <p>Accede a la plataforma de pedidos, envía tu hipótesis y recibe un informe auditable con grafo de razonamiento.</p>
+            <a href="#" class="btn-primary" style="font-size:1rem;padding:16px 44px;">Ir al Panel de Pedidos →</a>
+            <div class="cta-meta">
+                <span>contacto@factorycomplex.io</span>
+                <span>+54 9 11 1234-5678</span>
+                <span>Buenos Aires · Argentina</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="footer">
+    <div class="container">
+        <div>
+            <span class="brand">FACTORY COMPLEX</span>
+            <span style="margin-left:12px;font-size:0.8rem;">© 2026 · Todos los derechos reservados</span>
+        </div>
+        <div class="footer-links">
+            <a href="#">Política de privacidad</a>
+            <a href="#">Términos de servicio</a>
+            <a href="#">GitHub</a>
+        </div>
+    </div>
+</footer>
+
+<!-- ============================================================
+     SCRIPTS · Interactive Reasoning Graph
+     ============================================================ -->
+<script>
+(function () {
+    // Navbar scroll effect
+    window.addEventListener('scroll', function () {
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 60) {
+            navbar.style.background = 'rgba(5, 7, 10, 0.97)';
+            navbar.style.borderBottomColor = 'rgba(230, 235, 242, 0.14)';
+        } else {
+            navbar.style.background = 'rgba(5, 7, 10, 0.9)';
+            navbar.style.borderBottomColor = 'rgba(230, 235, 242, 0.08)';
+        }
+    });
+
+    // ========== Interactive Reasoning Graph ==========
+    const canvas = document.getElementById('reasoning-graph');
+    const ctx = canvas.getContext('2d');
+    const tooltip = document.getElementById('node-tooltip');
+    const ttType = document.getElementById('tt-type');
+    const ttTitle = document.getElementById('tt-title');
+    const ttDesc = document.getElementById('tt-desc');
+    const graphStats = document.getElementById('graph-stats');
+
+    // Resize canvas to container
+    function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        canvas.style.width = rect.width + 'px';
+        canvas.style.height = rect.height + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        width = rect.width;
+        height = rect.height;
+    }
+    let width = 480, height = 320;
+    resizeCanvas();
+    window.addEventListener('resize', () => {
+        resizeCanvas();
+        if (!running) draw();
+    });
+
+    // Colors matching CSS
+    const COLORS = {
+        hypothesis: '#4dd8e8',
+        support: '#4de88a',
+        contradict: '#e85d4d',
+        unresolved: '#454e59',
+        edge: 'rgba(230, 235, 242, 0.18)',
+        edgeSupport: 'rgba(77, 232, 138, 0.45)',
+        edgeContradict: 'rgba(232, 93, 77, 0.45)',
+        edgeUnresolved: 'rgba(69, 78, 89, 0.4)',
+        text: '#e6ebf2',
+        textDim: '#6b7684',
+        bg: '#0d1117'
+    };
+
+    // Graph data – reasoning structure
+    const nodes = [
+        { id: 0, label: 'H₀', name: 'Hipótesis principal', type: 'hypothesis',
+          desc: 'La mineralización de Cu-Au está controlada por fallas NE-SW y alteración potásica.',
+          x: 0, y: 0, vx: 0, vy: 0, r: 22 },
+        { id: 1, label: 'E1', name: 'Evidencia geoquímica', type: 'support',
+          desc: 'Anomalías de Cu > 800 ppm correlacionadas espacialmente con estructuras.',
+          x: 0, y: 0, vx: 0, vy: 0, r: 16 },
+        { id: 2, label: 'E2', name: 'Datos geofísicos', type: 'support',
+          desc: 'Magnetometría y IP muestran conductores alineados con fallas mapeadas.',
+          x: 0, y: 0, vx: 0, vy: 0, r: 16 },
+        { id: 3, label: 'E3', name: 'Bio-sensor VOC', type: 'support',
+          desc: 'Firmas de VOCs de microorganismos asociados a sulfuros detectadas in-situ.',
+          x: 0, y: 0, vx: 0, vy: 0, r: 15 },
+        { id: 4, label: 'C1', name: 'Contraste litológico', type: 'contradict',
+          desc: 'Algunas muestras de alto grado no coinciden con el modelo de falla principal.',
+          x: 0, y: 0, vx: 0, vy: 0, r: 15 },
+        { id: 5, label: 'U1', name: 'Zona no muestreada', type: 'unresolved',
+          desc: 'Sector NW sin cobertura de sondeos. Evidencia insuficiente.',
+          x: 0, y: 0, vx: 0, vy: 0, r: 14 },
+        { id: 6, label: 'E4', name: 'Alteración potásica', type: 'support',
+          desc: 'Mapeo hiperspectral confirma halo de K-feldespato alrededor de venas.',
+          x: 0, y: 0, vx: 0, vy: 0, r: 15 },
+        { id: 7, label: 'C2', name: 'Interferencia cultural', type: 'contradict',
+          desc: 'Ruido electromagnético de infraestructura minera distorsiona IP en el este.',
+          x: 0, y: 0, vx: 0, vy: 0, r: 14 }
+    ];
+
+    const links = [
+        { source: 0, target: 1, type: 'support', strength: 0.9 },
+        { source: 0, target: 2, type: 'support', strength: 0.85 },
+        { source: 0, target: 3, type: 'support', strength: 0.7 },
+        { source: 0, target: 6, type: 'support', strength: 0.8 },
+        { source: 0, target: 4, type: 'contradict', strength: 0.55 },
+        { source: 0, target: 7, type: 'contradict', strength: 0.4 },
+        { source: 0, target: 5, type: 'unresolved', strength: 0.3 },
+        { source: 1, target: 2, type: 'support', strength: 0.5 },
+        { source: 2, target: 6, type: 'support', strength: 0.6 },
+        { source: 4, target: 5, type: 'unresolved', strength: 0.35 }
+    ];
+
+    // Force simulation parameters
+    const repulsion = 2800;
+    const springLength = 95;
+    const springK = 0.035;
+    const damping = 0.86;
+    const centerPull = 0.012;
+
+    let running = true;
+    let dragged = null;
+    let hovered = null;
+
+    function initPositions() {
+        const cx = width / 2, cy = height / 2;
+        nodes.forEach((n, i) => {
+            const angle = (i / nodes.length) * Math.PI * 2 - Math.PI / 2;
+            const dist = n.type === 'hypothesis' ? 0 : 90 + Math.random() * 40;
+            n.x = cx + Math.cos(angle) * dist;
+            n.y = cy + Math.sin(angle) * dist;
+            n.vx = 0;
+            n.vy = 0;
+        });
+        // Hypothesis at center
+        nodes[0].x = cx;
+        nodes[0].y = cy;
+    }
+    initPositions();
+
+    function simulate() {
+        // Repulsion
+        for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                const a = nodes[i], b = nodes[j];
+                let dx = b.x - a.x, dy = b.y - a.y;
+                let dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
+                const force = repulsion / (dist * dist);
+                const fx = (dx / dist) * force;
+                const fy = (dy / dist) * force;
+                if (a !== dragged) { a.vx -= fx; a.vy -= fy; }
+                if (b !== dragged) { b.vx += fx; b.vy += fy; }
+            }
+        }
+        // Springs
+        links.forEach(l => {
+            const a = nodes[l.source], b = nodes[l.target];
+            let dx = b.x - a.x, dy = b.y - a.y;
+            let dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
+            const force = (dist - springLength) * springK * l.strength;
+            const fx = (dx / dist) * force;
+            const fy = (dy / dist) * force;
+            if (a !== dragged) { a.vx += fx; a.vy += fy; }
+            if (b !== dragged) { b.vx -= fx; b.vy -= fy; }
+        });
+        // Center gravity + damping + bounds
+        const cx = width / 2, cy = height / 2;
+        nodes.forEach(n => {
+            if (n === dragged) return;
+            n.vx += (cx - n.x) * centerPull;
+            n.vy += (cy - n.y) * centerPull;
+            n.vx *= damping;
+            n.vy *= damping;
+            n.x += n.vx;
+            n.y += n.vy;
+            // Soft bounds
+            const m = n.r + 8;
+            if (n.x < m) { n.x = m; n.vx *= -0.4; }
+            if (n.x > width - m) { n.x = width - m; n.vx *= -0.4; }
+            if (n.y < m) { n.y = m; n.vy *= -0.4; }
+            if (n.y > height - m) { n.y = height - m; n.vy *= -0.4; }
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, width, height);
+
+        // Edges
+        links.forEach(l => {
+            const a = nodes[l.source], b = nodes[l.target];
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            let color = COLORS.edge;
+            if (l.type === 'support') color = COLORS.edgeSupport;
+            else if (l.type === 'contradict') color = COLORS.edgeContradict;
+            else if (l.type === 'unresolved') color = COLORS.edgeUnresolved;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5 + l.strength;
+            ctx.stroke();
+        });
+
+        // Nodes
+        nodes.forEach(n => {
+            const isHov = n === hovered || n === dragged;
+            const r = isHov ? n.r + 3 : n.r;
+
+            // Glow
+            if (isHov || n.type === 'hypothesis') {
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, r + 6, 0, Math.PI * 2);
+                ctx.fillStyle = COLORS[n.type] + '22';
+                ctx.fill();
+            }
+
+            // Circle
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+            ctx.fillStyle = COLORS[n.type];
+            ctx.fill();
+            if (isHov) {
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Label
+            ctx.fillStyle = n.type === 'unresolved' ? COLORS.textDim : '#05070a';
+            ctx.font = `600 ${n.type === 'hypothesis' ? 12 : 10}px JetBrains Mono, monospace`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(n.label, n.x, n.y);
+        });
+    }
+
+    function loop() {
+        if (running) simulate();
+        draw();
+        requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    // Interaction
+    function getMouse(e) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (e.clientX - rect.left),
+            y: (e.clientY - rect.top)
+        };
+    }
+
+    function findNode(mx, my) {
+        for (let i = nodes.length - 1; i >= 0; i--) {
+            const n = nodes[i];
+            const dx = n.x - mx, dy = n.y - my;
+            if (dx * dx + dy * dy < (n.r + 4) * (n.r + 4)) return n;
+        }
+        return null;
+    }
+
+    canvas.addEventListener('mousedown', e => {
+        const m = getMouse(e);
+        dragged = findNode(m.x, m.y);
+        if (dragged) {
+            dragged.vx = 0;
+            dragged.vy = 0;
+        }
+    });
+    window.addEventListener('mouseup', () => { dragged = null; });
+    window.addEventListener('mousemove', e => {
+        const m = getMouse(e);
+        if (dragged) {
+            dragged.x = m.x;
+            dragged.y = m.y;
+            dragged.vx = 0;
+            dragged.vy = 0;
+        }
+        const h = findNode(m.x, m.y);
+        if (h !== hovered) {
+            hovered = h;
+            if (h) {
+                ttType.textContent = h.type.toUpperCase();
+                ttTitle.textContent = h.name;
+                ttDesc.textContent = h.desc;
+                tooltip.classList.add('visible');
+                // Position tooltip
+                const rect = canvas.getBoundingClientRect();
+                let tx = e.clientX - rect.left + 14;
+                let ty = e.clientY - rect.top - 10;
+                if (tx + 200 > width) tx = m.x - 210;
+                if (ty < 10) ty = m.y + 20;
+                tooltip.style.left = tx + 'px';
+                tooltip.style.top = ty + 'px';
+            } else {
+                tooltip.classList.remove('visible');
+            }
+        } else if (h) {
+            const rect = canvas.getBoundingClientRect();
+            let tx = e.clientX - rect.left + 14;
+            let ty = e.clientY - rect.top - 10;
+            if (tx + 200 > width) tx = m.x - 210;
+            if (ty < 10) ty = m.y + 20;
+            tooltip.style.left = tx + 'px';
+            tooltip.style.top = ty + 'px';
+        }
+        canvas.style.cursor = h || dragged ? 'pointer' : 'grab';
+    });
+
+    // Touch support
+    canvas.addEventListener('touchstart', e => {
+        e.preventDefault();
+        const t = e.touches[0];
+        const m = getMouse(t);
+        dragged = findNode(m.x, m.y);
+        if (dragged) { dragged.vx = 0; dragged.vy = 0; }
+    }, { passive: false });
+    canvas.addEventListener('touchmove', e => {
+        e.preventDefault();
+        if (!dragged) return;
+        const t = e.touches[0];
+        const m = getMouse(t);
+        dragged.x = m.x;
+        dragged.y = m.y;
+    }, { passive: false });
+    canvas.addEventListener('touchend', () => { dragged = null; });
+
+    // Controls
+    document.getElementById('btn-reset').addEventListener('click', () => {
+        initPositions();
+        running = true;
+        document.getElementById('btn-pause').textContent = 'PAUSE';
+    });
+    document.getElementById('btn-pause').addEventListener('click', function () {
+        running = !running;
+        this.textContent = running ? 'PAUSE' : 'PLAY';
+    });
+
+    // Update footer stats periodically (simulated live)
+    const statuses = ['78% SUPPORTED', '76% SUPPORTED', '79% SUPPORTED', '78% SUPPORTED'];
+    let si = 0;
+    setInterval(() => {
+        si = (si + 1) % statuses.length;
+        graphStats.textContent = statuses[si];
+    }, 4000);
+
+    console.log('Factory Complex · Grafo de razonamiento interactivo activo');
+})();
+</script>
+
+</body>
+</html>
